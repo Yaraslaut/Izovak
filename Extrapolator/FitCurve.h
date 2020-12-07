@@ -1,11 +1,15 @@
 #pragma once
 #include <vector>
 #include <utility>
+#include <dlib/global_optimization.h>
+#include <spdlog/spdlog.h>
 
 typedef std::vector<double> vector;
-constexpr  int TRESSHOLD_FOR_INITIAL_VALS = 0.2;
+
 
 class Extrapolator{
+
+  const double TRESSHOLD_FOR_INITIAL_VALS = 0.2;
 
   Extrapolator() = default;
 
@@ -64,13 +68,19 @@ class Extrapolator{
   //------------------ FUNCTIONS-------------------------
   //function to create curve
   double Ellipse(double t);
+  double Ellipse(double t, double A, double B, double C, double f);
 
   // find bound for solver a first guess of values
   void DefineBoundsAndGuessedValues();
   void FillBounds();
 
+  // A,B,C,F
+  dlib::matrix<double,0,1> lower_b ;
+  dlib::matrix<double,0,1> upper_b ;
+
   // find error of current guess
   double FindError();
+  double FindError(double A, double B, double C, double f);
 
   // initialize extrapolator
   void Initialize();
@@ -85,7 +95,6 @@ class Extrapolator{
   // Main function to fit data
   void MakeFit();
   // function to call dlib library
-  void FitCurve();
 
   // create arrays of extrapolated data
   std::pair<vector,vector> CalculateExtrapol(double _maxTime);
@@ -105,12 +114,17 @@ public:
 
   // initial freq also is known
   Extrapolator(vector _vecX,vector _vecY, double _max,double _min, double _freq):
-    m_X(_vecX), m_Y(_vecY), m_maxVal(_max), m_minVal(_min), m_freq(_freq){Initialize();}
+    m_X(_vecX), m_Y(_vecY), m_maxVal(_max), m_minVal(_min), m_freq(_freq){Initialize();
+  }
 
   double GetMaxTime(){return m_maxTime;};
   double GetMinTime(){return m_minTime;};
 
   std::pair<vector,vector> AddDataAndGetUpdate(vector _x, vector _y, double t_max);
   std::pair<vector,vector> AddDataAndGetUpdate(double x, double y, double t_max);
+
+
+  void FitCurve();
+
 
 };
