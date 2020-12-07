@@ -1,6 +1,6 @@
 # Izovak
 
-#Build
+# Build
 
 mkdir build
 cd build
