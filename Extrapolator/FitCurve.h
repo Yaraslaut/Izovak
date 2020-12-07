@@ -110,7 +110,7 @@ public:
   double GetMaxTime(){return m_maxTime;};
   double GetMinTime(){return m_minTime;};
 
-  std::pair<vector,vector> AddDataAndGetUpdate(vector _x, vector _y, double t_max = -1);
-  std::pair<vector,vector> AddDataAndGetUpdate(double x, double y, double t_max = -1);
+  std::pair<vector,vector> AddDataAndGetUpdate(vector _x, vector _y, double t_max);
+  std::pair<vector,vector> AddDataAndGetUpdate(double x, double y, double t_max);
 
 };
