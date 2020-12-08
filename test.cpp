@@ -34,7 +34,7 @@ int main(){
   std::string line;
 
   std::ifstream file;
-  file.open("/media/yaraslau/Data/Izovak/Extrapolator/data_first_part.txt",std::ifstream::in);
+  file.open("../data_first_part.txt",std::ifstream::in);
   if (file.is_open())//Если открытие файла прошло успешно
     {
       while (getline(file, line))
