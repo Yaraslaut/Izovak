@@ -2,9 +2,6 @@
 #include <spdlog/spdlog.h>
 #include <fstream>
 
-
-
-
 double Ellipse(double t, double A, double B, double C, double f)
  {
    auto ellipse = std::sqrt( std::pow(A*std::cos(f*t),2) + std::pow(B*std::sin(f*t),2));
@@ -63,7 +60,7 @@ int main(){
 
   for(int i = 50; i < X_data.size(); ++i)
     {
-      Test.AddDataAndGetUpdate(X_data[i],Y_data[i],300.);
+      auto val  = Test.AddDataAndGetUpdate(X_data[i],Y_data[i],300.);
     }
 
   return 0;

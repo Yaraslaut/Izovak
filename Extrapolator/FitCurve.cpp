@@ -4,8 +4,10 @@
 #include <cmath>
 
 
+// std::pair<X,Y>
 std::pair<vector,vector> Extrapolator::AddDataAndGetUpdate(double _x, double _y, double t_max = -1)
 {
+  spdlog::info("------------------------------------");
   m_X.push_back(_x);
   m_Y.push_back(_y);
   MakeFit();
@@ -14,11 +16,14 @@ std::pair<vector,vector> Extrapolator::AddDataAndGetUpdate(double _x, double _y,
     {
       return CalculateExtrapol(t_max);
     }
-  return CalculateExtrapol(t_max);
+  return CalculateExtrapol(std::max(m_maxTime,m_minTime)*1.5);
 }
 
+// std::pair<X,Y>
 std::pair<vector,vector> Extrapolator::AddDataAndGetUpdate(vector _x, vector _y, double t_max = -1)
 {
+  spdlog::info("------------------------------------");
+
   for ( auto x : _x)
     {
       m_X.push_back(x);
@@ -35,13 +40,46 @@ std::pair<vector,vector> Extrapolator::AddDataAndGetUpdate(vector _x, vector _y,
     {
       return CalculateExtrapol(t_max);
     }
-  return CalculateExtrapol(t_max);
+  return CalculateExtrapol(std::max(m_maxTime,m_minTime)*1.5);
 }
 
 
 void Extrapolator::UpdateTime()
 {
-  // TODO
+  auto x_0 = m_X[0];
+  auto dx = m_X[1] - m_X[0];
+
+  double tempMaxVal = 0;
+  double tempMinVal = 1e300;
+  int i = 0;
+
+  int foundInd = 0;
+  while(foundInd != 2)
+    {
+      auto time = x_0 + i*dx;
+      auto valAtX = Ellipse(time);
+      if(valAtX > tempMaxVal)
+        {
+          tempMaxVal = valAtX;
+          m_maxTime = time;
+          if(tempMaxVal > Ellipse(time + dx))
+            {
+              foundInd ++;
+            }
+        }
+      if(valAtX < tempMinVal)
+        {
+          tempMinVal = valAtX;
+          m_minTime = time;
+
+          if(tempMinVal < Ellipse(time + dx))
+            {
+              foundInd ++;
+            }
+        }
+      i++;
+    }
+  spdlog::info("Max {} and min {} time ",m_maxTime,m_minTime);
 }
 
 
@@ -62,6 +100,7 @@ void Extrapolator::MakeFit()
 
   if(FindError() > prevError) // unsuccessful fitting
     {
+      spdlog::debug("Fitting was unsuccessful");
       m_A = A;
       m_B = B;
       m_C = C;
